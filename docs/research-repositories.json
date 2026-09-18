@@ -1,0 +1,111 @@
+{
+  "researched_on": "2026-09-18",
+  "scope": "Public repository metadata and selected documentation/source inspection; not execution benchmarks or complete security audits. Null license means none detected during review.",
+  "repositories": [
+    {
+      "repository": "Panniantong/Agent-Reach",
+      "url": "https://github.com/Panniantong/Agent-Reach",
+      "license": "MIT",
+      "commit": "a19a171fa980a0785849596492e0af4db800c82f",
+      "branch": "main"
+    },
+    {
+      "repository": "draco-agent/tech-news-digest",
+      "url": "https://github.com/draco-agent/tech-news-digest",
+      "license": "MIT",
+      "commit": "05c5d03b00c1809b8c8b8ed186cdc077eb732d21",
+      "branch": "main"
+    },
+    {
+      "repository": "helebest/holo-rss-reader",
+      "url": "https://github.com/helebest/holo-rss-reader",
+      "license": "MIT",
+      "commit": "3db32ff8aa4eb08dde5fd609a32fbddb41c98ca2",
+      "branch": "master"
+    },
+    {
+      "repository": "rizumita/feed-curator",
+      "url": "https://github.com/rizumita/feed-curator",
+      "license": "MIT",
+      "commit": "7ae387c5d07528df7c4d76dc05596e15b558abb4",
+      "branch": "main"
+    },
+    {
+      "repository": "neelgun17/morning-digest",
+      "url": "https://github.com/neelgun17/morning-digest",
+      "license": "MIT",
+      "commit": "62924eeb04d5665234f69d13ab40902c72845c3e",
+      "branch": "main"
+    },
+    {
+      "repository": "deev-pal08/Newsletter-Agent",
+      "url": "https://github.com/deev-pal08/Newsletter-Agent",
+      "license": "MIT",
+      "commit": "f8f3840b2d211133edcc421d51b2470a7d740e91",
+      "branch": "main"
+    },
+    {
+      "repository": "vigorX777/ai-daily-digest",
+      "url": "https://github.com/vigorX777/ai-daily-digest",
+      "license": null,
+      "commit": "1f484a3f2f101cb0f1a94a35b1a1befe0f672b82",
+      "branch": "main"
+    },
+    {
+      "repository": "druce/newsagent",
+      "url": "https://github.com/druce/newsagent",
+      "license": null,
+      "commit": "40340945e1064233832f2a62c639a583b508b59b",
+      "branch": "master"
+    },
+    {
+      "repository": "ollama/ollama",
+      "url": "https://github.com/ollama/ollama",
+      "license": "MIT",
+      "commit": "d0c8cdb795d4640890d87c146d674cc311df4138",
+      "branch": "main"
+    },
+    {
+      "repository": "ggml-org/llama.cpp",
+      "url": "https://github.com/ggml-org/llama.cpp",
+      "license": "MIT",
+      "commit": "50631b3d2c569ad8e5c112090cd28570b1268ee0",
+      "branch": "master"
+    },
+    {
+      "repository": "ml-explore/mlx-lm",
+      "url": "https://github.com/ml-explore/mlx-lm",
+      "license": "MIT",
+      "commit": "9d1e356e7cc6549e7d1697adabe2ea01ff8e062c",
+      "branch": "main"
+    },
+    {
+      "repository": "router-for-me/CLIProxyAPI",
+      "url": "https://github.com/router-for-me/CLIProxyAPI",
+      "license": "MIT",
+      "commit": "c93978c4ea2e908255a2a06c37599fda3651554a",
+      "branch": "main"
+    },
+    {
+      "repository": "automazeio/vibeproxy",
+      "url": "https://github.com/automazeio/vibeproxy",
+      "license": "MIT",
+      "commit": "42f1b8c566080a0fc5c9da55e7d2109bcae0c7e8",
+      "branch": "main"
+    },
+    {
+      "repository": "nguyenphutrong/quotio",
+      "url": "https://github.com/nguyenphutrong/quotio",
+      "license": "MIT",
+      "commit": "e0ad2858e8cf25240f7736c955491004288dc12c",
+      "branch": "master"
+    },
+    {
+      "repository": "anomalyco/opencode",
+      "url": "https://github.com/anomalyco/opencode",
+      "license": "MIT",
+      "commit": "5f9d9187c01708b4e700c9c81c1045ab482bf31d",
+      "branch": "dev"
+    }
+  ]
+}
