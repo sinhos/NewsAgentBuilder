@@ -1,11 +1,15 @@
 # NewsAgentBuilder
-Fully personal and customizable Agent that keeps track of the all the AI news from your own sources ( or from pre-built source templates ) and keeps the essential that impacts you and your job, removing the unnecessary larp.
 
-## Research and implementation proposal
+An open-source project for personal news briefings: follow sources you choose, understand what matters to your work, and spend less time sorting through hype.
 
-The project is currently in the research stage. Read the [feasibility analysis and implementation plan](docs/RESEARCH.md), researched on 18 September 2026, for the proposed architecture, source-access limitations, local model options, reusable skills, evaluation criteria, and phased roadmap. The document describes proposed functionality, not an implemented product.
+The project is currently in the research stage; the application is not implemented yet.
 
-Detailed investigations:
+**Start with the [short, plain-English plan](docs/RESEARCH.md).** It explains the idea, how to run it without API charges, and what to build first.
 
-- [Ollama, local models, hardware, and benchmarking](docs/OLLAMA.md)
-- [ChatGPT subscriptions, third-party clients, and API proxies](docs/SUBSCRIPTION-BACKENDS.md)
+Optional deeper reading:
+
+- [Full analysis and implementation roadmap](docs/RESEARCH-DETAILED.md)
+- [Ollama, local models, and hardware](docs/OLLAMA.md)
+- [ChatGPT subscriptions and third-party tools](docs/SUBSCRIPTION-BACKENDS.md)
+
+Research completed on 18 September 2026. The short guide is based on that research, not a new verification of provider terms or capabilities.
