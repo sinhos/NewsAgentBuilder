@@ -1,0 +1,94 @@
+{
+  "profile": {
+    "description": "Computer Science student preparing for a durable technical career. Builds lightweight websites and wants to understand practical AI progress without chasing every product.",
+    "interests": "CS fundamentals; junior and internship hiring in Switzerland and Europe; transferable engineering skills; agentic engineering; evaluation, debugging and security of agents; AI web design; accessibility, performance and maintainable HTML/CSS/JS.",
+    "avoid": "Sensational job-replacement predictions without evidence; repeated launches; engagement bait; affiliate lists; products that add only a prompt or generic UI to GPT/Claude without meaningful workflow value.",
+    "reading_minutes": 15,
+    "language": "English"
+  },
+  "provider": {
+    "backend": "codex",
+    "model": "",
+    "base_url": "",
+    "key_env": "NEWSAGENT_API_KEY"
+  },
+  "sources": [
+    {
+      "id": "andrew-linkedin",
+      "name": "Andrew Ng \u2014 applied AI and skills",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/in/andrewyng/",
+      "enabled": true
+    },
+    {
+      "id": "karpathy-x",
+      "name": "Andrej Karpathy \u2014 engineering and learning",
+      "platform": "x",
+      "url": "https://x.com/karpathy",
+      "enabled": true
+    },
+    {
+      "id": "simon-x",
+      "name": "Simon Willison \u2014 practical engineering",
+      "platform": "x",
+      "url": "https://x.com/simonw",
+      "enabled": true
+    },
+    {
+      "id": "deeplearning-instagram",
+      "name": "DeepLearning.AI \u2014 discovery, verify claims",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/deeplearningai/",
+      "enabled": true
+    },
+    {
+      "id": "karpathy-youtube",
+      "name": "Andrej Karpathy \u2014 technical depth",
+      "platform": "youtube",
+      "url": "https://www.youtube.com/@AndrejKarpathy/videos",
+      "enabled": true
+    },
+    {
+      "id": "fireship-youtube",
+      "name": "Fireship \u2014 discovery, filter sensational framing",
+      "platform": "youtube",
+      "url": "https://www.youtube.com/@Fireship/videos",
+      "enabled": true
+    },
+    {
+      "id": "simon-feed",
+      "name": "Simon Willison \u2014 original posts",
+      "platform": "rss",
+      "url": "https://simonwillison.net/atom/everything/",
+      "enabled": true
+    },
+    {
+      "id": "openai-feed",
+      "name": "OpenAI \u2014 vendor announcements",
+      "platform": "rss",
+      "url": "https://openai.com/news/rss.xml",
+      "enabled": true
+    },
+    {
+      "id": "github-feed",
+      "name": "GitHub \u2014 tools and engineering",
+      "platform": "rss",
+      "url": "https://github.blog/feed/",
+      "enabled": true
+    },
+    {
+      "id": "pragmatic-feed",
+      "name": "The Pragmatic Engineer \u2014 engineering work and careers",
+      "platform": "rss",
+      "url": "https://newsletter.pragmaticengineer.com/feed",
+      "enabled": true
+    },
+    {
+      "id": "webdev-feed",
+      "name": "web.dev \u2014 web platform and quality",
+      "platform": "rss",
+      "url": "https://web.dev/feed.xml",
+      "enabled": true
+    }
+  ]
+}

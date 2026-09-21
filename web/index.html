@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="newsagent-session" content="__SESSION_TOKEN__">
+  <title>The useful part · NewsAgentBuilder</title>
+  <link rel="stylesheet" href="/style.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="masthead"><a href="/" class="brand">NewsAgentBuilder<span>Personal edition</span></a><span class="local">On your computer · private by default</span></header>
+  <main>
+    <section class="intro"><p class="eyebrow">LESS SCROLLING. MORE UNDERSTANDING.</p><h1>The useful part.</h1><p class="lead">What changed, why it matters to you,<br>and the evidence behind it.</p></section>
+    <nav class="tabs" aria-label="Sections"><button class="active" data-tab="today" aria-pressed="true">Your briefing</button><button data-tab="sources" aria-pressed="false">Sources</button><button data-tab="settings" aria-pressed="false">Your priorities</button></nav>
+    <p id="notice" role="status" aria-live="polite"></p>
+    <section id="today" class="panel">
+      <div class="toolbar"><div><label for="lookback">Look back</label><select id="lookback"><option value="1">24 hours</option><option value="3">3 days</option><option value="7">7 days · first catch-up</option></select></div><button id="generate" class="primary">Make my briefing</button></div>
+      <div class="run-status" id="run-status" aria-live="polite"></div>
+      <div class="reading-layout"><div id="issue"></div><aside><p class="eyebrow">YOUR ATTENTION BUDGET</p><p class="budget"><span id="budget">15</span> <span>minutes</span></p><p>Shorter on quiet days.<br>No obligation to catch up on everything.</p><label for="archive">Previous editions</label><select id="archive"><option value="">No editions yet</option></select><div id="coverage"></div><details><summary>Run options</summary><p>Collect first to inspect coverage, or write from material already collected.</p><button id="collect">Collect only</button><button id="write">Write from collected material</button><p>In Codex, ask: <strong>Use $news-brief to make my briefing.</strong></p></details></aside></div>
+    </section>
+    <section id="sources" class="panel" hidden>
+      <h2>Your sources, your choice.</h2><p class="section-intro">The starter list mixes discovery with original evidence. Following someone does not make every claim reliable.</p>
+      <p class="connection-note">LinkedIn, Instagram and X use your signed-in browser through OpenCLI. YouTube uses yt-dlp. If a connection fails, the briefing tells you. Instagram may provide captions without a direct post link; videos and images are not automatically inspected.</p>
+      <div id="source-list"></div>
+      <form id="add-source"><h3>Add a source</h3><div class="form-row"><label>Name<input name="name" required maxlength="150" placeholder="A person, publication or channel"></label><label>Platform<select name="platform"><option value="youtube">YouTube</option><option value="linkedin">LinkedIn profile</option><option value="instagram">Instagram account</option><option value="x">X account</option><option value="rss">RSS / Atom feed</option><option value="web">Web page</option></select></label></div><label>URL<input name="url" type="url" required placeholder="https://…"></label><button type="submit">Add source</button></form>
+      <details class="import"><summary>Add evidence you already have</summary><p>Paste a post or transcript you can access. This is marked as user-provided content. Collect once before importing.</p><form id="import"><label>Title<input name="title" required></label><label>Original URL<input name="url" type="url" required></label><label>Publication date, if known<input name="published_at" type="date"></label><label>Content<textarea name="text" rows="7" required maxlength="50000"></textarea></label><button>Import evidence</button></form></details>
+    </section>
+    <section id="settings" class="panel" hidden>
+      <h2>Relevant to your next chapter.</h2><p class="section-intro">These preferences guide selection and explanation. Nothing is inferred from tracking your reading.</p>
+      <form id="settings-form"><label>Your work and direction<textarea name="description" rows="3"></textarea></label><label>What deserves your attention<textarea name="interests" rows="4"></textarea></label><label>What to filter out<textarea name="avoid" rows="3"></textarea></label><div class="form-row"><label>Reading budget (minutes)<input name="reading_minutes" type="number" min="3" max="20" required></label><label>Language<input name="language" required></label></div>
+      <details><summary>Model and connection</summary><p id="provider-note">Codex uses your own ChatGPT login and available allowance. Two passes write and review the briefing. Changing to a remote provider sends your profile and evidence there.</p><label>Run with<select name="backend"><option value="codex">Codex · existing ChatGPT access</option><option value="ollama">Ollama · local model</option><option value="compatible">Compatible endpoint · advanced</option></select></label><label>Model<input name="model" placeholder="Leave blank for Codex default; required for other backends"></label><label>Endpoint<input name="base_url" placeholder="Ollama: http://127.0.0.1:11434"></label><label>API-key environment variable name<input name="key_env" placeholder="NEWSAGENT_API_KEY"></label><p>No keys or browser cookies belong in this form. A compatible endpoint can be Gemini or a user-operated proxy; this app does not provide a free subscription API, extra quota, or automatic paid fallback.</p></details><button class="primary">Save preferences</button></form>
+    </section>
+  </main><footer>Evidence before urgency. <span>No trackers. No endless feed.</span></footer>
+</body>
+</html>
