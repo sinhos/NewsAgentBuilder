@@ -20,6 +20,54 @@
   </header>
   <main id="main">
     <p id="notice" role="status" aria-live="polite"></p>
+    <section id="builder" class="panel" hidden aria-labelledby="builder-title">
+      <p class="eyebrow">Your own daily briefing</p>
+      <h1 id="builder-title">Build your newsletter.</h1>
+      <p class="section-intro">Choose what matters, where to look, and which model writes it. Everything stays editable.</p>
+      <p id="builder-progress" class="help" aria-live="polite"></p>
+      <form id="builder-form">
+        <fieldset data-step="0">
+          <legend>What should it help you understand?</legend>
+          <label>Your work or goals<textarea name="description" rows="3" maxlength="6000" required placeholder="What do you do, or want to do? Include your region if it matters."></textarea></label>
+          <label>What do you want to follow?<textarea name="interests" rows="3" maxlength="6000" required placeholder="Topics, skills, industries or decisions you want to stay informed about."></textarea></label>
+          <label>What should it skip?<textarea name="avoid" rows="2" maxlength="6000"></textarea></label>
+          <div class="form-row">
+            <label>Maximum minutes<input name="reading_minutes" type="number" min="3" max="20" required></label>
+            <label>Language<input name="language" maxlength="100" required></label>
+          </div>
+          <p class="help">A short useful edition beats a long one. Quiet days can have no main stories.</p>
+        </fieldset>
+        <fieldset data-step="1" hidden>
+          <legend>Where should it look?</legend>
+          <label>Source URLs · one per line<textarea name="source_urls" rows="7" required placeholder="Paste YouTube channels, social profiles or RSS feed URLs."></textarea></label>
+          <p class="help">YouTube, Instagram, X and LinkedIn account links are recognized automatically. Other links are treated as RSS / Atom feeds. Add ordinary web pages in Sources afterwards.</p>
+          <p class="help">Start with a few trusted sources. YouTube needs yt-dlp; social accounts need additional connections. RSS needs no extra collector. Saving a link does not sign you in or follow an account.</p>
+          <p id="builder-source-note" class="help"></p>
+        </fieldset>
+        <fieldset data-step="2" hidden>
+          <legend>Choose how it gets written.</legend>
+          <label>Model provider<select name="backend"><option value="codex">Codex · use your ChatGPT subscription</option><option value="ollama">Ollama · use your computer</option><option value="compatible">API · compatible endpoint</option></select></label>
+          <p id="builder-provider-note" class="help"></p>
+          <label>Model<input name="model" maxlength="300" placeholder="Leave empty for the Codex default"></label>
+          <div id="builder-endpoint">
+            <label>Endpoint<input name="base_url" type="url" maxlength="300" placeholder="http://127.0.0.1:11434"></label>
+          </div>
+          <div id="builder-key">
+            <label>API-key environment variable<input name="key_env" maxlength="100" placeholder="NEWSAGENT_API_KEY"></label>
+            <p class="help">Enter the variable name, never the key. Set its value in your terminal before starting the app.</p>
+          </div>
+          <div id="builder-review" class="builder-review"></div>
+          <button type="button" id="builder-check">Check prerequisites</button>
+          <div id="builder-checks" role="status" aria-live="polite"></div>
+          <p class="help">Saving creates your local configuration. It does not start collection or use model allowance.</p>
+        </fieldset>
+        <p id="builder-error" class="error" role="alert"></p>
+        <div class="actions">
+          <button type="button" id="builder-back">Back</button>
+          <button type="submit" id="builder-next" class="primary">Continue</button>
+        </div>
+      </form>
+    </section>
     <section id="today" class="panel" aria-label="Briefing">
       <div class="toolbar">
         <button id="generate" class="primary" disabled>New briefing</button>
@@ -53,7 +101,7 @@
         <summary>Connection status & help</summary>
         <div id="source-coverage"></div>
         <p>Saving a source does not connect or follow the account. Instagram, X and LinkedIn profiles need OpenCLI’s browser extension and a signed-in browser. LinkedIn company pages use a separate LinkedIn MCP connection. YouTube uses yt-dlp.</p>
-        <p>YC’s LinkedIn school page is currently unsupported. You can paste accessible posts below. Captions and transcripts do not include a visual review of videos.</p>
+        <p>LinkedIn school pages are currently unsupported. You can paste accessible posts below. Captions and transcripts do not include a visual review of videos.</p>
       </details>
       <details class="secondary-section">
         <summary>Paste a post or transcript</summary>
@@ -69,6 +117,7 @@
     </section>
     <section id="settings" class="panel" hidden aria-labelledby="settings-title">
       <h1 id="settings-title">Settings</h1>
+      <p class="section-intro"><a href="#build">Open the newsletter builder</a> to review your profile, sources and model together.</p>
       <form id="settings-form">
         <label>Your work and direction<textarea name="description" rows="3"></textarea></label>
         <label>Interests<textarea name="interests" rows="3"></textarea></label>
@@ -88,6 +137,13 @@
         </details>
         <button type="submit" class="primary">Save settings</button>
       </form>
+      <details class="secondary-section">
+        <summary>Reuse or share your newsletter setup</summary>
+        <p>Export your saved profile, sources and model settings. History, collected posts and login credentials are excluded. The file still contains your personal interests and source URLs: review it before sharing.</p>
+        <button type="button" id="export-config">Download configuration</button>
+        <label>Import a configuration<input id="import-config" type="file" accept=".json,application/json"></label>
+        <p class="help">Imports open in the builder for review. Your settings change only when you save.</p>
+      </details>
     </section>
   </main>
 </body>

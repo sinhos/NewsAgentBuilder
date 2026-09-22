@@ -3,6 +3,7 @@ const $ = (id) => document.getElementById(id);
 const token = document.querySelector('meta[name="newsagent-session"]').content;
 let state, selectedIssue = '', busy = false, pending = false, polling, refreshing;
 let sourceSignature = '', issueSignature = '', coverageSignature = '';
+let builderStep = 0, builderBase, builderLoaded = false;
 function el(tag, text, cls) { const node = document.createElement(tag); if (text !== undefined) node.textContent = text; if (cls) node.className = cls; return node; }
 function tell(text, error = false) { $('notice').textContent = text; $('notice').className = error ? 'error' : ''; }
 async function api(path, body) {
@@ -58,7 +59,8 @@ function renderIssue() {
   const box = $('issue'); box.replaceChildren();
   if (!issue) {
     const empty = el('div', undefined, 'empty');
-    empty.append(el('h1', 'No briefing yet'), el('p', 'Choose New briefing to collect from your sources. For your first catch-up, select seven days in Options.'));
+    empty.append(el('h1', 'Your newsletter is ready to start'), el('p', 'Choose New briefing to collect from your sources. For your first catch-up, select seven days in Options.'));
+    const setup = el('a', 'Review your newsletter setup'); setup.href = '#build'; empty.append(setup);
     box.append(empty); return;
   }
   selectedIssue = issue.id; $('archive').value = selectedIssue;
@@ -168,10 +170,13 @@ function renderSettings() {
 }
 function setControls() {
   for (const id of ['generate', 'collect', 'write']) $(id).disabled = !state || busy || pending;
-  if (state) $('write').disabled ||= !state.collection?.items;
+  if (state) {
+    $('write').disabled ||= !state.collection?.items;
+    $('generate').disabled ||= !state.config.profile.description.trim() || !state.config.profile.interests.trim() || !state.config.sources.some(s => s.enabled);
+  }
   $('generate').textContent = busy ? 'Working…' : 'New briefing';
   $('today').setAttribute('aria-busy', String(busy));
-  for (const control of document.querySelectorAll('#source-list input, #source-list button, form button')) {
+  for (const control of document.querySelectorAll('#source-list input, #source-list button, form button, #export-config, #import-config')) {
     control.disabled = busy || pending;
   }
 }
@@ -194,7 +199,11 @@ async function refresh() {
         new Option(`${date(issue.collected_at)} · ${issue.content.title}`, issue.id)) : [new Option('No editions yet', '')]));
     }
     $('archive').value = selectedIssue;
-    if (first) renderSettings();
+    if (first) {
+      renderSettings();
+      if (!state.issues.length && !state.config.profile.description.trim() && !location.hash) location.hash = '#build';
+      showPage();
+    }
     const signature = JSON.stringify([state.config.sources, state.collection?.coverage]);
     if (signature !== sourceSignature) {
       const focused = document.activeElement?.id;
@@ -247,15 +256,135 @@ async function run(action) {
   finally { pending = false; setControls(); }
 }
 function showPage() {
-  const page = {'#sources':'sources','#settings':'settings'}[location.hash] || 'today';
+  const page = {'#sources':'sources','#settings':'settings','#build':'builder'}[location.hash] || 'today';
+  for (const panel of document.querySelectorAll('.panel')) panel.hidden = panel.id !== page;
   for (const nav of document.querySelectorAll('[data-page]')) {
     const active = nav.dataset.page === page;
     if (active) nav.setAttribute('aria-current', 'page'); else nav.removeAttribute('aria-current');
-    $(nav.dataset.page).hidden = !active;
   }
-  document.title = `${page === 'today' ? 'Briefing' : page === 'sources' ? 'Sources' : 'Settings'} · NewsAgentBuilder`;
+  if (page === 'builder' && state && !builderLoaded) loadBuilder(state.config);
+  if (page !== 'builder') builderLoaded = false;
+  document.title = `${{today:'Briefing',sources:'Sources',settings:'Settings',builder:'Build your newsletter'}[page]} · NewsAgentBuilder`;
   tell('');
 }
+
+function loadBuilder(config) {
+  builderBase = structuredClone(config); builderStep = 0; builderLoaded = true;
+  const form = $('builder-form');
+  for (const [key, value] of Object.entries({...config.profile, ...config.provider})) form.elements.namedItem(key).value = value;
+  form.elements.namedItem('source_urls').value = config.sources.filter(s => s.enabled).map(s => s.url).join('\n');
+  const disabled = config.sources.filter(s => !s.enabled).length;
+  $('builder-source-note').textContent = disabled ? `${disabled} disabled sources will be kept. You can manage them in Sources.` : '';
+  $('builder-checks').replaceChildren(); $('builder-error').textContent = '';
+  updateProvider(); renderBuilderStep();
+}
+function builderConfig() {
+  const form = $('builder-form'), config = structuredClone(builderBase);
+  const value = name => form.elements.namedItem(name).value.trim();
+  for (const key of Object.keys(config.profile)) config.profile[key] = key === 'reading_minutes' ? Number(value(key)) : value(key);
+  for (const key of Object.keys(config.provider)) config.provider[key] = value(key);
+  if (config.provider.backend === 'codex') config.provider.base_url = '';
+  if (config.provider.backend !== 'compatible') config.provider.key_env = 'NEWSAGENT_API_KEY';
+  const urls = [...new Set(value('source_urls').split(/\n/).map(s => s.trim()).filter(Boolean))];
+  if (!urls.length) throw new Error('Add at least one source URL.');
+  config.sources = urls.map(url => {
+    const existing = builderBase.sources.find(s => s.url === url);
+    if (existing) return {...existing, enabled:true};
+    let parsed;
+    try { parsed = new URL(url); } catch { throw new Error('Each source needs a full URL starting with https://.'); }
+    if (!['https:', 'http:'].includes(parsed.protocol)) throw new Error('Use public HTTP or HTTPS source URLs.');
+    const host = parsed.hostname.replace(/^www\./, '');
+    const platform = {'youtube.com':'youtube','youtu.be':'youtube','instagram.com':'instagram','x.com':'x','twitter.com':'x','linkedin.com':'linkedin'}[host] || 'rss';
+    const parts = parsed.pathname.split('/').filter(Boolean);
+    const name = platform === 'rss' ? host : (parts[parts[0] === 'in' || parts[0] === 'company' || parts[0] === 'school' ? 1 : 0] || host).replace(/^@/, '');
+    return {id:'source-' + crypto.randomUUID().slice(0,12), name, platform, url, enabled:true};
+  });
+  config.sources.push(...builderBase.sources.filter(s => !s.enabled && !urls.includes(s.url)));
+  if (config.sources.length > 30) throw new Error('Use at most 30 sources, including disabled sources.');
+  return config;
+}
+function updateProvider() {
+  const form = $('builder-form'), backend = form.elements.namedItem('backend').value;
+  $('builder-endpoint').hidden = backend === 'codex'; $('builder-key').hidden = backend !== 'compatible';
+  form.elements.namedItem('model').required = backend !== 'codex';
+  form.elements.namedItem('base_url').required = backend !== 'codex';
+  form.elements.namedItem('key_env').required = backend === 'compatible';
+  $('builder-provider-note').textContent = {
+    codex:'Uses the installed Codex CLI and your own ChatGPT login. Inference happens at OpenAI and uses your subscription allowance. No separate API key is needed.',
+    ollama:'Uses an installed local model. Start Ollama first and enter its exact model tag. Speed and quality depend on your hardware; this app downloads nothing.',
+    compatible:'Uses your chosen endpoint and model. The provider receives your profile and evidence. Its pricing and quotas apply; JSON-schema support is required.'
+  }[backend];
+  form.elements.namedItem('model').placeholder = backend === 'codex' ? 'Leave empty for the Codex default' : 'Exact installed or available model name';
+}
+function renderBuilderStep() {
+  for (const fieldset of $('builder-form').querySelectorAll('[data-step]')) {
+    fieldset.hidden = Number(fieldset.dataset.step) !== builderStep;
+    fieldset.disabled = fieldset.hidden;
+  }
+  $('builder-progress').textContent = `Step ${builderStep + 1} of 3 · ${['Your interests','Your sources','Your model'][builderStep]}`;
+  $('builder-back').hidden = builderStep === 0;
+  $('builder-next').textContent = builderStep === 2 ? 'Save my newsletter' : 'Continue';
+  if (builderStep === 2) {
+    const config = builderConfig();
+    $('builder-review').replaceChildren(el('strong', 'Your newsletter'),
+      el('p', `${config.sources.filter(s => s.enabled).length} sources · ${config.profile.language} · up to ${config.profile.reading_minutes} minutes`),
+      el('p', 'Each main story explains what changed, why it matters to you, and the evidence. Low-priority items stay brief.'));
+  }
+}
+function renderChecks(checks) {
+  const list = el('ul', undefined, 'setup-checks');
+  for (const check of checks) {
+    const row = el('li'); row.append(el('strong', `${check.name} · ${{found:'found',missing:'needs setup',manual:'check manually',unsupported:'unsupported'}[check.status]}`), el('p', check.detail)); list.append(row);
+  }
+  $('builder-checks').replaceChildren(el('p', 'Local prerequisites only. Source access and model generation have not been tested.', 'help'), list);
+}
+$('builder-form').addEventListener('submit', async event => {
+  event.preventDefault(); if (!state || pending || busy) return;
+  $('builder-error').textContent = '';
+  try {
+    if (builderStep < 2) {
+      if (builderStep === 1) builderConfig();
+      builderStep++; renderBuilderStep();
+      $('builder-form').querySelector(`[data-step="${builderStep}"] textarea, [data-step="${builderStep}"] select`).focus();
+      return;
+    }
+    if (await save(builderConfig())) {
+      renderSettings(); location.hash = '#briefing';
+    }
+  } catch (e) { $('builder-error').textContent = e.message; }
+});
+$('builder-back').addEventListener('click', () => { builderStep--; $('builder-error').textContent = ''; renderBuilderStep(); });
+$('builder-form').elements.namedItem('backend').addEventListener('change', event => {
+  const form = $('builder-form');
+  form.elements.namedItem('model').value = '';
+  form.elements.namedItem('base_url').value = event.target.value === 'ollama' ? 'http://127.0.0.1:11434' : '';
+  updateProvider();
+});
+$('builder-form').addEventListener('input', () => $('builder-checks').replaceChildren());
+$('builder-check').addEventListener('click', async () => {
+  if (pending || busy) return;
+  pending = true; setControls(); $('builder-error').textContent = '';
+  try { renderChecks((await api('/api/check', builderConfig())).checks); }
+  catch (e) { $('builder-error').textContent = e.message; }
+  finally { pending = false; setControls(); }
+});
+$('export-config').addEventListener('click', () => {
+  if (!state || busy || pending) return;
+  const anchor = el('a'); anchor.href = '/api/export'; anchor.download = 'newsletter-config.json';
+  document.body.append(anchor); anchor.click(); anchor.remove();
+});
+$('import-config').addEventListener('change', async event => {
+  const file = event.target.files[0];
+  if (!file || pending || busy) return;
+  pending = true; setControls();
+  try {
+    if (file.size > 100000) throw new Error('Configuration files must be under 100 KB.');
+    const config = JSON.parse(await file.text());
+    await api('/api/check', config);
+    loadBuilder(config); location.hash = '#build';
+  } catch (e) { tell('Could not import configuration. ' + e.message, true); }
+  finally { pending = false; event.target.value = ''; setControls(); }
+});
 window.addEventListener('hashchange', showPage);
 window.addEventListener('focus', () => refresh().catch(e => tell(e.message, true)));
 $('generate').addEventListener('click', () => run('run'));

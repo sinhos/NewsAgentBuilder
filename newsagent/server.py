@@ -6,6 +6,7 @@ import threading
 from urllib.parse import urlsplit
 
 from .core import ROOT
+from .setup import check_setup
 
 
 def make_server(store, port=8765):
@@ -48,11 +49,13 @@ def make_server(store, port=8765):
         def host_ok(self):
             return self.headers.get("Host") in {f"127.0.0.1:{self.server.server_port}", f"localhost:{self.server.server_port}"}
 
-        def reply(self, code, body, typ="application/json; charset=utf-8"):
+        def reply(self, code, body, typ="application/json; charset=utf-8", headers=None):
             data = json.dumps(body, ensure_ascii=False).encode() if isinstance(body, (dict, list)) else body.encode()
             self.send_response(code)
             self.send_header("Content-Type", typ)
             self.send_header("Content-Length", str(len(data)))
+            for key, value in (headers or {}).items():
+                self.send_header(key, value)
             self.send_header("Cache-Control", "no-store")
             self.send_header("X-Content-Type-Options", "nosniff")
             self.send_header("Referrer-Policy", "no-referrer")
@@ -68,6 +71,8 @@ def make_server(store, port=8765):
                 name = "index.html" if path == "/" else path[1:]
                 typ = {"index.html": "text/html", "app.js": "text/javascript", "style.css": "text/css"}[name]
                 return self.reply(200, (ROOT / "web" / name).read_text().replace("__SESSION_TOKEN__", token), typ + "; charset=utf-8")
+            if path == "/api/export":
+                return self.reply(200, store.config(), headers={"Content-Disposition": 'attachment; filename="newsletter-config.json"'})
             if path == "/api/state":
                 history = store.history()
                 try:
@@ -102,6 +107,9 @@ def make_server(store, port=8765):
                         if job["running"]:
                             raise ValueError("Wait for the current run before changing settings")
                     store.save_config(body)
+                elif self.path == "/api/check":
+                    from .core import validate_config
+                    return self.reply(200, {"checks": check_setup(validate_config(body))})
                 elif self.path == "/api/run":
                     launch(body.get("action", "run"), body.get("days", 1))
                 elif self.path == "/api/import":

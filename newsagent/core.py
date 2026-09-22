@@ -53,10 +53,10 @@ def validate_config(config):
     for source in config["sources"]:
         if not isinstance(source, dict) or set(source) != {"id", "name", "platform", "url", "enabled"}:
             raise ValueError("Invalid source fields")
-        if not re.fullmatch(r"[a-z0-9-]{1,60}", source["id"]) or source["id"] in ids:
+        if not isinstance(source["id"], str) or not re.fullmatch(r"[a-z0-9-]{1,60}", source["id"]) or source["id"] in ids:
             raise ValueError("Source IDs must be unique lowercase names")
         ids.add(source["id"])
-        if source["platform"] not in PLATFORMS or type(source["enabled"]) is not bool:
+        if not isinstance(source["platform"], str) or source["platform"] not in PLATFORMS or type(source["enabled"]) is not bool:
             raise ValueError("Invalid platform or enabled setting")
         if not isinstance(source["name"], str) or not 1 <= len(source["name"]) <= 150:
             raise ValueError("Source name must be 1–150 characters")
@@ -76,12 +76,13 @@ def validate_config(config):
     provider = config["provider"]
     if not isinstance(provider, dict) or set(provider) != {"backend", "model", "base_url", "key_env"}:
         raise ValueError("Invalid provider fields")
-    if provider["backend"] not in ("codex", "ollama", "compatible"):
-        raise ValueError("Unknown provider")
     if any(not isinstance(v, str) or len(v) > 300 for v in provider.values()):
         raise ValueError("Provider settings must be short text; keep keys in environment variables")
+    if provider["backend"] not in ("codex", "ollama", "compatible"):
+        raise ValueError("Unknown provider")
     if not re.fullmatch(r"[A-Z][A-Z0-9_]*", provider["key_env"]):
         raise ValueError("key_env must name an environment variable, not contain a secret")
+    models.validate_connection(provider)
     return config
 
 
@@ -106,9 +107,28 @@ class Store:
         finally:
             connection.close()
 
-    def init(self):
-        if not self.config_path.exists():
-            write_json(self.config_path, json.loads((ROOT / "config/starter.json").read_text()))
+    def init(self, template=None):
+        with self.lock():
+            if self.config_path.exists():
+                if template is not None:
+                    raise ValueError("Settings already exist. Import through the builder to review changes first.")
+                return
+            path = Path(template) if template else ROOT / "config/starter.json"
+            if path.stat().st_size > 100000:
+                raise ValueError("Template exceeds 100 KB")
+            write_json(self.config_path, validate_config(json.loads(path.read_text())))
+
+    def export_config(self, destination):
+        """Export settings only; never evidence, history, auth files or environment values."""
+        destination = Path(destination).resolve()
+        if destination.exists():
+            raise ValueError("Export destination already exists; choose a new filename")
+        config = self.config()
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        fd = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as stream:
+            json.dump(config, stream, ensure_ascii=False, indent=2)
+            stream.write("\n")
 
     def config(self):
         if not self.config_path.exists():

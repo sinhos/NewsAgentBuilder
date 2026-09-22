@@ -256,6 +256,34 @@ class ServerTests(unittest.TestCase):
         self.assertEqual(state["job"]["error"], "")
         self.assertEqual(state["issues"][0]["content"]["title"], "Reviewed edition")
 
+    def test_setup_check_validates_draft_without_saving_or_generating(self):
+        with urlopen(self.base) as response:
+            token = re.search(r'name="newsagent-session" content="([^"]+)"', response.read().decode())[1]
+        original = self.store.config()
+        draft = copy.deepcopy(original)
+        draft['profile']['description'] = 'A different person'
+        request = Request(self.base + '/api/check', data=json.dumps(draft).encode(),
+                          headers={'Content-Type':'application/json', 'X-Newsagent-Token':token})
+        with patch('newsagent.models.generate') as model:
+            with urlopen(request) as response:
+                self.assertTrue(json.load(response)['checks'])
+            model.assert_not_called()
+        self.assertEqual(self.store.config(), original)
+
+        draft['provider']['backend'] = 'invalid'
+        request.data = json.dumps(draft).encode()
+        with self.assertRaises(HTTPError) as error:
+            urlopen(request)
+        self.assertEqual(error.exception.code, 400)
+        error.exception.close()
+        self.assertEqual(self.store.config(), original)
+
+    def test_configuration_download_contains_only_settings(self):
+        fixture(self.store)
+        with urlopen(self.base + '/api/export') as response:
+            self.assertIn('attachment;', response.headers['Content-Disposition'])
+            self.assertEqual(json.load(response), self.store.config())
+
 
 if __name__ == "__main__":
     unittest.main()

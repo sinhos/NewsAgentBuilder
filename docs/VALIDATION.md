@@ -1,3 +1,15 @@
+# Newsletter builder — 22 September 2026
+
+New installations start with a blank profile and sources. A three-step browser flow collects interests, source URLs and model settings, then saves a reusable configuration. Existing private settings and editions are preserved. The engineering creator list is an optional example with social channels disabled by default.
+
+All 25 backend tests pass locally, covering configuration preservation, export/import round trips, overwrite rejection, malformed settings, provider validation, diagnostics without generation, credential exclusion, download responses, source collection and editorial checks. The CLI init/doctor/export/import path also passed in disposable folders. JavaScript syntax and diff whitespace checks pass. A GitHub Actions workflow runs the suite on Python 3.11 and 3.13 without model credentials.
+
+Browser checks used disposable local stores: a non-technical profile completed the builder and survived reload; configuration download succeeded; importing the public example opened a review before saving and retained nine disabled social sources; invalid remote Ollama endpoints were rejected without losing form values. The provider step was inspected at 390px with no horizontal overflow. No live model generation or new social authentication was used for these checks.
+
+Prerequisite checks inspect local software and API-key presence only. They do not certify logins, allowance, model quality or source availability. The website still collects bounded samples from configured sources and does not automatically discover omitted stories across the wider web. This version adds onboarding and portability, not broader collection coverage.
+
+---
+
 # Reading-first cleanup — 22 September 2026
 
 The reader now has one continuous column, plain source lists and a single primary action. Cards, decorative badges, slogans, the hero and the sidebar have been removed. Evidence, archive, connection help and model settings remain available through labeled controls. Research and the reasoning behind the removals are in [DESIGN.md](DESIGN.md).

@@ -11,7 +11,11 @@ def main():
     parser = argparse.ArgumentParser(description="Your evidence-led personal briefing")
     parser.add_argument("--home", type=Path, default=DEFAULT_HOME, help="Private data directory (default: ignored .local/)")
     sub = parser.add_subparsers(dest="action", required=True)
-    sub.add_parser("init", help="Create private settings from the editable starter list")
+    p = sub.add_parser("init", help="Create private settings; existing settings are preserved")
+    p.add_argument("--config", type=Path, help="Start from a shared newsletter configuration")
+    sub.add_parser("doctor", help="Check local prerequisites without calling a model")
+    p = sub.add_parser("export", help="Export your newsletter settings, without history or credentials")
+    p.add_argument("file", type=Path)
     p = sub.add_parser("serve", help="Open the local reading and setup interface")
     p.add_argument("--port", type=int, default=8765)
     for action in ("collect", "run"):
@@ -34,8 +38,16 @@ def main():
     store = Store(args.home)
     try:
         if args.action == "init":
-            store.init()
+            store.init(args.config)
             print(f"Private settings: {store.config_path}")
+        elif args.action == "doctor":
+            from .setup import check_setup
+            store.init()
+            for check in check_setup(store.config()):
+                print(f"{check['status'].upper()} — {check['name']}: {check['detail']}")
+        elif args.action == "export":
+            store.export_config(args.file)
+            print(f"Saved {args.file}. Contains your profile and source URLs; review before sharing.")
         elif args.action == "serve":
             from .server import make_server
             store.init()

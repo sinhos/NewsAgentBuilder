@@ -76,7 +76,17 @@ input[type=checkbox] { width: 17px; height: 17px; margin: 0; accent-color: var(-
 #notice:empty,#run-status:empty { display: none; }
 #notice,#run-status { font-size: 13px; margin: 18px 0; }
 .error { color: #9d3325; }
-#sources,#settings { padding-top: 36px; }
+#sources,#settings,#builder { padding-top: 36px; }
+[hidden] { display: none !important; }
+.eyebrow { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+fieldset { border: 0; padding: 0; margin: 26px 0; min-width: 0; }
+legend { padding: 0; margin-bottom: 22px; font-size: 19px; font-weight: 600; letter-spacing: -.02em; }
+.builder-review { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 18px; font-size: 14px; }
+.setup-checks { list-style: none; padding: 0; font-size: 13px; }
+.setup-checks li { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.setup-checks p { color: var(--muted); margin: 4px 0 0; }
+#builder-error:empty { display: none; }
+#import-config { margin-top: 18px; }
 .panel[hidden] { display: none; }
 .source-group { padding: 20px 0; border-bottom: 1px solid var(--line); }
 .source-group h2 { font-size: 17px; margin-bottom: 10px; }

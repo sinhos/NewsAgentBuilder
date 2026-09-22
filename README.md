@@ -1,39 +1,57 @@
 # NewsAgentBuilder
 
-Personal news briefings for people who want to understand what matters without scrolling all day. Every important story explains **what changed, why it matters to you, and what evidence supports it**.
+Build a personal news briefing around your work, interests and trusted sources. Read what matters, understand the evidence, and get back to your day.
 
-This is an early, working local version: a Codex skill, a private reading website, configurable sources, model-based writing and review, citation checks, history, and feedback. It targets a maximum 15-minute read. It does not guarantee complete coverage or error-free interpretation.
+Every important story explains **what changed**, **why it matters to you**, and **what evidence supports it**. Promotions and weak claims are downgraded; quiet days stay short. Your reading budget is a ceiling, not a target.
 
-**Start here** — Python 3.11+ on macOS/Linux, no runtime packages:
+This is an open-source local application. You own the configuration and history, choose the model, and run it from a browser or Codex. There is no hosted service or project subscription.
+
+## Get started
+
+You need **Git and Python 3.11+ on macOS or Linux**. Windows users can try WSL; native Windows is not supported. No Python packages, frontend packages or build step are required for the app itself.
 
 ```sh
-python3 -m newsagent init
+git clone https://github.com/sinhos/NewsAgentBuilder.git
+cd NewsAgentBuilder
 python3 -m newsagent serve
 ```
 
-Open **http://127.0.0.1:8765**. Review the starter sources and choose **New briefing**. Keep the server running while using it. Nothing runs on a recurring schedule by default.
+Open **[localhost:8765](http://127.0.0.1:8765)**. The first visit opens a three-step builder:
 
-In Codex, open this repository and ask **“Use $news-brief to make my briefing.”** The skill can also investigate original evidence before writing. If skill discovery has not refreshed, ask Codex to read `skills/news-brief/SKILL.md` directly.
+1. Describe your work, interests, exclusions, language and reading budget.
+2. Paste your source URLs, one per line.
+3. Choose a model, check prerequisites, and save your newsletter.
 
-**Source access:** YouTube uses installed yt-dlp; LinkedIn profiles, Instagram accounts and X accounts use installed OpenCLI with a connected, signed-in browser. These are experimental connectors, not guaranteed platform access. Failures are visible. Public RSS feeds provide additional evidence; you can also import content yourself.
+Keep the terminal running. Once the chosen model and collectors are connected, select **New briefing**. Use **Options & archive → Past 7 days** for an initial catch-up. Runs are manual; the app does not schedule or email editions.
 
-**Model choice:** use your existing ChatGPT login through Codex, a local Ollama model, or an explicitly configured compatible endpoint. Subscription limits still apply. The app provides no unlimited free API and never switches to a paid fallback.
+## Bring your model
 
-Settings and generated material stay in the ignored `.local/` folder. The website has no trackers, external scripts, or frontend dependencies. Do not expose the local server publicly.
+| Connection | What you need | Where inference happens |
+|---|---|---|
+| Codex | Installed Codex CLI, your ChatGPT login and available allowance | OpenAI |
+| Ollama | Running Ollama and an installed local model | Your computer |
+| Compatible API | Endpoint, model and your own key where required | Your chosen provider |
 
-Read the [setup and usage guide](docs/USAGE.md) and [validation results and limitations](docs/VALIDATION.md).
+For Codex, follow the [official CLI installation guide](https://learn.chatgpt.com/docs/codex/cli), then run `codex login` with ChatGPT. Subscription limits apply; there is no separate API-key fallback. For other providers, see [model setup](docs/USAGE.md#choose-the-model). Model quality and hardware requirements vary.
 
-```sh
-python3 -m unittest discover -s tests -v
-```
+## Bring your sources
 
-Code is available under the [MIT license](LICENSE). Model licenses, source-content rights and external service terms are separate.
+RSS / Atom feeds need no extra collector. YouTube needs **yt-dlp**. Instagram, X and LinkedIn profiles need **OpenCLI**, its browser extension and your signed-in session. LinkedIn company pages need a separate MCP connection. These experimental social connectors can fail; missing coverage is shown explicitly. See [connection instructions](docs/USAGE.md#connect-the-four-platforms).
 
-Optional deeper reading:
+Start with a few sources you trust. The [optional engineering example](config/examples/engineering-creators.json) includes Nick Saraev, Alex Hormozi and Nate Herk; additional social sources are disabled until you connect them. New users start with an empty source list.
 
-- [Short research guide](docs/RESEARCH.md)
-- [Full analysis and implementation roadmap](docs/RESEARCH-DETAILED.md)
-- [Ollama, local models, and hardware](docs/OLLAMA.md)
-- [ChatGPT subscriptions and third-party tools](docs/SUBSCRIPTION-BACKENDS.md)
+## Reuse your newsletter
 
-The research documents are dated design references. Use the usage guide for what the implementation currently does.
+In **Settings → Reuse or share your newsletter setup**, download a configuration or import one into the builder for review. Exports contain your profile and source URLs, but no history, collected content or login credentials. Review personal details before sharing.
+
+You can also ask Codex: **“Use $news-brief to make my briefing.”** Open this repository in Codex first. See [builder and configuration guide](docs/BUILDER.md) for CLI examples, separate newsletters and updates.
+
+## What to expect
+
+The app collects bounded samples, writes an edition, reviews it in a second model pass, and checks citation excerpts in code. It does **not** monitor the whole internet, automatically discover every important launch, verify every claim independently, or visually watch videos. The website does not search beyond configured sources; the Codex workflow can investigate further.
+
+Private data stays in ignored `.local/`. A remote model receives your profile and evidence. The reader has no trackers or external scripts. This single-user loopback server is not suitable for public hosting.
+
+[Usage and troubleshooting](docs/USAGE.md) · [Validation and limitations](docs/VALIDATION.md) · [Contributing](CONTRIBUTING.md) · [Design](docs/DESIGN.md)
+
+MIT licensed: see [LICENSE](LICENSE). External models, source content and services have their own licenses and terms. Earlier design research is available in [docs/RESEARCH.md](docs/RESEARCH.md).

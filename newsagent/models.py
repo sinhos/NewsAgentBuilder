@@ -16,7 +16,25 @@ class NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def validate_connection(config):
+    """Validate connection settings without contacting a provider or consuming quota."""
+    if config["backend"] == "codex":
+        return
+    base = config["base_url"].rstrip("/")
+    p = urlsplit(base)
+    if p.scheme not in ("https", "http") or not p.hostname or p.username or p.password or p.query or p.fragment:
+        raise ValueError("Invalid model endpoint; do not include credentials, queries or fragments")
+    local = p.hostname in ("localhost", "127.0.0.1", "::1")
+    if (p.scheme != "https" and not local) or (config["backend"] == "ollama" and not local):
+        raise ValueError("Use loopback for Ollama and HTTPS for remote providers")
+    if not config["model"].strip():
+        raise ValueError("Choose an installed/available model first")
+    if config["backend"] == "ollama" and "cloud" in config["model"].lower():
+        raise ValueError("Local mode cannot use an Ollama cloud tag")
+
+
 def generate(text, config):
+    validate_connection(config)
     backend = config["backend"]
     if backend == "codex":
         executable = shutil.which("codex")
@@ -49,16 +67,8 @@ def generate(text, config):
         raise ValueError("Select codex, ollama, or compatible")
     base = config.get("base_url", "").rstrip("/")
     p = urlsplit(base)
-    if p.scheme not in ("https", "http") or not p.hostname or p.username or p.password or p.query or p.fragment:
-        raise ValueError("Invalid model endpoint")
     local = p.hostname in ("localhost", "127.0.0.1", "::1")
-    if (p.scheme != "https" and not local) or (backend == "ollama" and not local):
-        raise ValueError("Use loopback for Ollama and HTTPS for remote providers")
     model = config.get("model", "")
-    if not model:
-        raise ValueError("Choose an installed/available model first")
-    if backend == "ollama" and ("cloud" in model.lower()):
-        raise ValueError("Local mode cannot use an Ollama cloud tag")
     headers = {"Content-Type": "application/json", "x-goog-api-client": "newsagentbuilder/0.1"}
     messages = [{"role": "user", "content": text}]
     if backend == "ollama":

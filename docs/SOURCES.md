@@ -1,6 +1,6 @@
 # Selected sources
 
-Updated 22 September 2026. These replace the original starter list. Saving them here does not follow accounts on social platforms.
+Updated 22 September 2026. These sources are available in the optional `config/examples/engineering-creators.json`, with only YouTube enabled. New installations start with an empty list. Saving a source does not follow its account on social platforms.
 
 | Source | Channels |
 |---|---|
