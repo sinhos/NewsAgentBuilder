@@ -17,6 +17,10 @@ The website runs on your computer; it is not deployed publicly. Do not expose th
 
 ## Ask in Codex
 
+You do not need the Codex app open to use the website. On macOS, double-click `Start NewsAgent.command` in the repository folder: it starts the local server and opens your browser. Keep its Terminal window running; Ctrl-C stops the server. Reopening the launcher reuses a running instance with the same private data directory. This does not install a login item or start anything automatically after a restart.
+
+On macOS/Linux, `python3 -m newsagent serve --open-browser` provides the same behavior from a terminal. The selected provider still needs its normal setup. Choosing Codex uses the installed CLI and saved login; you do not need to conduct a conversation here for each briefing.
+
 Open this repository and ask: **“Use $news-brief to make my briefing.”** The repository skill lives under `.agents/skills/news-brief` (linked to the portable `skills/news-brief` folder). A new conversation or skill refresh may be needed for discovery. You can also explicitly ask Codex to read `skills/news-brief/SKILL.md` in an existing conversation.
 
 This mode uses the model in your conversation and can investigate supporting sources. Before its two model passes, the website attempts at most two recent video transcripts and four short feed items' original pages. Failed retrieval stays labeled. It does not search the wider web for missing facts. Use the Codex workflow for deeper verification.

@@ -35,7 +35,9 @@ The first visit opens a three-step builder:
 
 Once the chosen model and collectors are connected, select **New briefing**. Use **Options & archive → Past 7 days** for an initial catch-up. Runs are manual; the app does not schedule or email editions.
 
-To use it again later, open a terminal in the downloaded `NewsAgentBuilder` folder and repeat step 2. Your saved settings and editions remain on your computer.
+**On macOS, next time just double-click `Start NewsAgent.command` in the downloaded folder.** It starts the server and opens your browser; Codex does not need to be open. Keep the Terminal window it opens running while you use the newsletter. Press Ctrl-C there to stop it. If the same newsletter is already running, the launcher opens that reader instead of starting a second server.
+
+On Linux, run `python3 -m newsagent serve --open-browser` from the project folder. Your saved settings and editions remain on your computer when you stop the server.
 
 ## Bring your model
 

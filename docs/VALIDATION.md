@@ -1,3 +1,11 @@
+# Finder launcher — 22 September 2026
+
+The executable `Start NewsAgent.command` starts the local reader and opens the default browser without a Codex conversation. `serve --open-browser` supports the same flow on macOS/Linux. It reuses a listener only when the app and private directory identity match, including while that instance is generating an edition; an unrelated occupied port remains an error. This is a foreground Terminal launcher, not a background service or login item.
+
+The shell syntax and 32 backend tests pass, including identity isolation and reuse with the browser call mocked. Native Finder interaction could not be tested because computer-use permissions were unavailable. No login settings, model configuration or saved editions were changed.
+
+---
+
 # Briefing exports and graph research — 22 September 2026
 
 Each saved edition can now be downloaded as Markdown from About this edition, or exported with `export-briefing` from the CLI. Exports include the written stories, caveats, citation excerpts and links, low-priority items, and coverage limitations. They read the immutable saved edition rather than the current collection. Existing JSON snapshots and SQLite history remain unchanged.

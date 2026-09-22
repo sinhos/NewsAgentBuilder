@@ -1,13 +1,28 @@
 """Single-user, loopback-only UI. Not a public hosting server."""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+import hashlib
 import json
 import re
 import secrets
 import threading
 from urllib.parse import urlsplit
+from urllib.request import build_opener, ProxyHandler
 
 from .core import ROOT
 from .setup import check_setup
+
+
+def reader_identity(store):
+    return {"app": "NewsAgentBuilder", "home": hashlib.sha256(str(store.home).encode()).hexdigest()}
+
+
+def reader_is_running(store, port):
+    """Only reuse a listener belonging to this application and private directory."""
+    try:
+        with build_opener(ProxyHandler({})).open(f"http://127.0.0.1:{port}/api/health", timeout=2) as response:
+            return json.loads(response.read(2048)) == reader_identity(store)
+    except (OSError, ValueError):
+        return False
 
 
 def make_server(store, port=8765):
@@ -68,6 +83,8 @@ def make_server(store, port=8765):
             if not self.host_ok():
                 return self.reply(403, {"error": "Local access only"})
             path = urlsplit(self.path).path
+            if path == "/api/health":
+                return self.reply(200, reader_identity(store))
             if path in ("/", "/app.js", "/style.css"):
                 name = "index.html" if path == "/" else path[1:]
                 typ = {"index.html": "text/html", "app.js": "text/javascript", "style.css": "text/css"}[name]

@@ -1,4 +1,5 @@
 import argparse
+import errno
 import json
 from pathlib import Path
 import sys
@@ -21,6 +22,7 @@ def main():
     p.add_argument("--issue", help="Saved edition ID; omit for the latest")
     p = sub.add_parser("serve", help="Open the local reading and setup interface")
     p.add_argument("--port", type=int, default=8765)
+    p.add_argument("--open-browser", action="store_true", help="Open the reader automatically; reuse this newsletter if already running")
     for action in ("collect", "run"):
         p = sub.add_parser(action)
         p.add_argument("--days", type=int, default=1)
@@ -55,11 +57,24 @@ def main():
             store.export_issue(args.file, args.issue)
             print(f"Saved briefing: {args.file}")
         elif args.action == "serve":
-            from .server import make_server
-            store.init()
-            server = make_server(store, args.port)
+            from .server import make_server, reader_is_running
+            import webbrowser
+            if not store.config_path.exists():
+                store.init()
+            try:
+                server = make_server(store, args.port)
+            except OSError as exc:
+                if args.open_browser and exc.errno == errno.EADDRINUSE and reader_is_running(store, args.port):
+                    webbrowser.open(f"http://127.0.0.1:{args.port}")
+                    print("Your newsletter is already running. Opened its reader.")
+                    return
+                if exc.errno == errno.EADDRINUSE:
+                    raise ValueError("That port is occupied. Use serve --port 8767, or stop the other server first.") from exc
+                raise
             print(f"Open http://127.0.0.1:{server.server_port} — keep this terminal running", flush=True)
             try:
+                if args.open_browser:
+                    webbrowser.open(f"http://127.0.0.1:{server.server_port}")
                 server.serve_forever()
             finally:
                 server.server_close()

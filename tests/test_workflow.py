@@ -15,7 +15,7 @@ from urllib.request import Request, urlopen
 from newsagent.core import Store, write_json, validate_config
 from newsagent.editorial import validate_issue
 from newsagent.net import safe_url, public_addresses
-from newsagent.server import make_server
+from newsagent.server import make_server, reader_is_running
 from newsagent.sources import item, normalize_social, collect_feed, collect_social, needs_browser_bridge
 
 
@@ -234,6 +234,23 @@ class ServerTests(unittest.TestCase):
         with urlopen(self.base) as response:
             self.assertIn("frame-ancestors 'none'", response.headers["Content-Security-Policy"])
             self.assertNotIn("__SESSION_TOKEN__", response.read().decode())
+
+    def test_launcher_only_recognizes_the_same_private_directory(self):
+        self.assertTrue(reader_is_running(self.store, self.server.server_port))
+        other = Store(Path(self.temp.name) / 'another-newsletter')
+        self.assertFalse(reader_is_running(other, self.server.server_port))
+        with urlopen(self.base + '/api/health') as response:
+            health = json.load(response)
+        self.assertEqual(health['app'], 'NewsAgentBuilder')
+        self.assertNotIn(self.temp.name, json.dumps(health))
+
+    def test_launcher_reuses_existing_server_without_starting_a_second_one(self):
+        from newsagent.__main__ import main
+        args = ['newsagent', '--home', self.temp.name, 'serve', '--port', str(self.server.server_port), '--open-browser']
+        with self.store.lock(), patch('sys.argv', args), patch('webbrowser.open') as open_browser, patch('builtins.print'):
+            main()
+        open_browser.assert_called_once_with(self.base)
+        self.assertTrue(reader_is_running(self.store, self.server.server_port))
 
     def test_website_generation_saves_reviewed_issue(self):
         _, draft = fixture(self.store)
