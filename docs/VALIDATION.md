@@ -1,3 +1,15 @@
+# Reading-first cleanup — 22 September 2026
+
+The reader now has one continuous column, plain source lists and a single primary action. Cards, decorative badges, slogans, the hero and the sidebar have been removed. Evidence, archive, connection help and model settings remain available through labeled controls. Research and the reasoning behind the removals are in [DESIGN.md](DESIGN.md).
+
+Browser checks used a disposable local store and mocked collection/model responses: a rejected settings save preserved the entered value; a corrected save survived reload; generation showed progress, disabled repeated submissions and displayed the completed issue; collecting while reading an archived issue preserved the edition and its expanded evidence. Native archive selection worked. The phone layout was checked at 390px with no horizontal overflow. These checks did not consume model allowance or change the user's stored newsletter.
+
+All 16 existing backend tests, JavaScript syntax and diff whitespace checks pass. The frontend now uses non-overlapping polling, request timeouts, ordinary navigation links and one run-error location. Changing sources no longer reloads unsaved settings fields.
+
+The user's latest saved collection has three checked sources and nine unavailable sources. This change makes that limitation visible; it does not repair social authentication or generate a replacement edition. Existing private history and source selections are preserved.
+
+---
+
 # Redesign validation — 22 September 2026
 
 Sixteen tests pass, including new limits on individual story fields, acceptance of LinkedIn organisation URLs, correct company-post routing, rejection of profile-only responses, undated company-page evidence, and explicit rejection of unsupported school-page retrieval. Company responses were tested with fixtures, not live authenticated content.

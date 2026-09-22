@@ -11,7 +11,7 @@ python3 -m newsagent init
 python3 -m newsagent serve
 ```
 
-Open `http://127.0.0.1:8765`. Keep the terminal running. Choose **Generate briefing** to collect and generate, or use **Run options** to do the stages separately. On the first run, choose the seven-day catch-up if useful. Future runs default to 24 hours. Nothing runs periodically unless you arrange a schedule.
+Open `http://127.0.0.1:8765`. Keep the terminal running. Choose **New briefing** to collect and generate, or use **Options & archive** to do the stages separately. On the first run, choose the seven-day catch-up if useful. Future runs default to 24 hours. Nothing runs periodically unless you arrange a schedule.
 
 The website runs on your computer; it is not deployed publicly. Do not expose this development server through a tunnel or bind it to a public interface. Public hosting would need a different authentication/deployment design.
 
@@ -50,7 +50,7 @@ Sources: [Codex non-interactive mode](https://learn.chatgpt.com/docs/non-interac
 
 **Short summaries, optional depth**
 
-The reader shows what changed, why it matters and a practical takeaway. Expand **Evidence & context** for caveats, durable lessons, supporting excerpts and feedback. Future editions prefer three stories (maximum five) and enforce short field limits. Fifteen minutes is a ceiling. Collection status is collapsible, and old editions retain their original sources and dates when you change the list.
+The reader shows what changed, why it matters and a practical takeaway. Expand **Evidence & context** for caveats, durable lessons, supporting excerpts and feedback. Future editions prefer three stories (maximum five) and enforce short field limits. Fifteen minutes is a ceiling. The reader uses one continuous column. Options and the archive are under **Options & archive**; source management and connection help live under **Sources**. Missing-source counts stay visible beside the edition. Old editions retain their original sources and dates when you change the list.
 
 **Evidence and privacy**
 
