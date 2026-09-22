@@ -53,7 +53,21 @@ RSS / Atom feeds need no extra collector. YouTube needs **yt-dlp**. Instagram, X
 
 Start with a few sources you trust. The [optional engineering example](config/examples/engineering-creators.json) includes Nick Saraev, Alex Hormozi and Nate Herk; additional social sources are disabled until you connect them. New users start with an empty source list.
 
-## Reuse your newsletter
+## Save your briefings
+
+Every generated edition is saved automatically on your computer. Reopen recent editions through **Options & archive → Read an edition**. Settings, history and evidence stay in the private `.local/` folder; individual editions are also stored as JSON in `.local/issues/`.
+
+To keep a readable copy elsewhere, open an edition, expand **About this edition**, and choose **Save this briefing (.md)**. The Markdown file includes the summary, caveats, evidence links and coverage gaps. Save it in your own folder or open it in a Markdown notes app. No cloud account is required and nothing is uploaded automatically.
+
+From the project folder, export the latest edition with:
+
+```sh
+python3 -m newsagent export-briefing /path/to/your/briefing.md
+```
+
+Replace the example path with your chosen location. See [saving and backups](docs/BUILDER.md#save-editions-and-back-up-your-archive). We also assessed [Graphify for archive retrieval](docs/GRAPHIFY.md); it is not a required dependency or an implemented integration.
+
+## Reuse your newsletter setup
 
 In **Settings → Reuse or share your newsletter setup**, download a configuration or import one into the builder for review. Exports contain your profile and source URLs, but no history, collected content or login credentials. Review personal details before sharing.
 

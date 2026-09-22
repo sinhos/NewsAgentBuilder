@@ -1,3 +1,13 @@
+# Briefing exports and graph research — 22 September 2026
+
+Each saved edition can now be downloaded as Markdown from About this edition, or exported with `export-briefing` from the CLI. Exports include the written stories, caveats, citation excerpts and links, low-priority items, and coverage limitations. They read the immutable saved edition rather than the current collection. Existing JSON snapshots and SQLite history remain unchanged.
+
+All 30 tests pass, including original-evidence preservation, missing edition handling, overwrite rejection, escaped export markup, coverage retention, downloads, and retrieval beyond the reader's 30-edition list. The CLI export passed with a synthetic edition, and an actual saved edition downloaded successfully through the browser. JavaScript syntax and diff whitespace checks pass. No model calls were needed for validation.
+
+The README and builder guide now distinguish configuration exports, readable edition exports, and full private-directory backups. Graphify was researched from its repository, package metadata and benchmark document; it was not installed or integrated. See [GRAPHIFY.md](GRAPHIFY.md) for the recommendation and proposed evaluation.
+
+---
+
 # Newsletter builder — 22 September 2026
 
 New installations start with a blank profile and sources. A three-step browser flow collects interests, source URLs and model settings, then saves a reusable configuration. Existing private settings and editions are preserved. The engineering creator list is an optional example with social channels disabled by default.

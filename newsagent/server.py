@@ -1,6 +1,7 @@
 """Single-user, loopback-only UI. Not a public hosting server."""
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
+import re
 import secrets
 import threading
 from urllib.parse import urlsplit
@@ -73,6 +74,16 @@ def make_server(store, port=8765):
                 return self.reply(200, (ROOT / "web" / name).read_text().replace("__SESSION_TOKEN__", token), typ + "; charset=utf-8")
             if path == "/api/export":
                 return self.reply(200, store.config(), headers={"Content-Disposition": 'attachment; filename="newsletter-config.json"'})
+            match = re.fullmatch(r"/api/issues/([a-f0-9]{32})\.md", path)
+            if match:
+                from .export import markdown
+                try:
+                    issue = store.issue(match[1])
+                except ValueError:
+                    return self.reply(404, {"error": "Saved briefing not found"})
+                filename = f"briefing-{issue['collected_at'][:10]}-{match[1][:8]}.md"
+                return self.reply(200, markdown(issue), "text/markdown; charset=utf-8",
+                                  {"Content-Disposition": f'attachment; filename="{filename}"'})
             if path == "/api/state":
                 history = store.history()
                 try:

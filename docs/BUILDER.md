@@ -44,6 +44,25 @@ python3 -m newsagent export /tmp/my-newsletter.json
 
 Export refuses to overwrite an existing file. It excludes issue history, evidence, environment-variable values and authentication files.
 
+## Save editions and back up your archive
+
+Every successfully published briefing is saved automatically in the private data directory: the archive database is `history.sqlite3` and complete edition snapshots are in `issues/`. By default these are under `.local/`. Each edition keeps its own evidence and coverage, so later collections do not rewrite its citations.
+
+The browser shows the latest 30 editions in **Options & archive → Read an edition**. Older saved editions remain in storage. Open any displayed edition, expand **About this edition**, and select **Save this briefing (.md)** to download a readable copy. The browser uses its usual download location or prompts for a destination, depending on browser settings.
+
+For a chosen folder, use the terminal:
+
+```sh
+python3 -m newsagent export-briefing /path/to/briefing.md
+python3 -m newsagent export-briefing /path/to/older-briefing.md --issue EDITION_ID
+```
+
+The first command exports the latest edition. For an older edition, replace `EDITION_ID` with the ID in its saved JSON filename. This also works for editions outside the browser's 30-edition list. Export refuses to overwrite an existing file.
+
+Markdown exports contain the complete written edition, citations and collection limitations. They exclude raw collected articles, your configuration and account credentials, but can contain personalized explanations. Review them before sharing. They can be saved in a folder you back up or opened in a Markdown editor; this app does not sync to cloud services.
+
+To back up everything, stop the server and any collection/generation first, then copy the entire private data directory to your backup location. A configuration export alone does not back up editions, and a Markdown export alone does not preserve the full underlying evidence snapshot.
+
 ## Keep separate newsletters
 
 Use a different private directory for each configuration and pass the same `--home` on every command for that newsletter:

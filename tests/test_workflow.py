@@ -284,6 +284,21 @@ class ServerTests(unittest.TestCase):
             self.assertIn('attachment;', response.headers['Content-Disposition'])
             self.assertEqual(json.load(response), self.store.config())
 
+    def test_briefing_download_uses_saved_edition_and_unknown_id_is_404(self):
+        _, draft = fixture(self.store)
+        saved = self.store.publish(draft)
+        write_json(self.store.home / 'packet.json', {'items': []})
+        with urlopen(self.base + '/api/issues/' + saved['id'] + '.md') as response:
+            self.assertIn('text/markdown', response.headers['Content-Type'])
+            self.assertIn('attachment;', response.headers['Content-Disposition'])
+            document = response.read().decode()
+        self.assertIn(draft['title'], document)
+        self.assertIn('https://example.org/release', document)
+        with self.assertRaises(HTTPError) as error:
+            urlopen(self.base + '/api/issues/' + '0' * 32 + '.md')
+        self.assertEqual(error.exception.code, 404)
+        error.exception.close()
+
 
 if __name__ == "__main__":
     unittest.main()

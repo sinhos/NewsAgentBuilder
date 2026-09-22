@@ -134,6 +134,9 @@ function renderIssue() {
   }
   const verification = el('details', undefined, 'verification');
   verification.append(el('summary', `About this edition · ${issue.reading_minutes} min including context`), el('p', issue.verification + ' ' + issue.selection_note));
+  const download = el('a', 'Save this briefing (.md)');
+  download.href = `/api/issues/${encodeURIComponent(issue.id)}.md`; download.download = '';
+  const saved = el('p'); saved.append(download); verification.append(saved);
   const coverage = el('div'); renderCoverage(coverage, issue.coverage, issue.collected_at);
   verification.append(coverage); box.append(verification);
 }

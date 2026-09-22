@@ -170,6 +170,26 @@ class Store:
         with self.db() as db:
             return [json.loads(row[0]) for row in db.execute("SELECT payload FROM issues ORDER BY created DESC LIMIT 30")]
 
+    def issue(self, identity=None):
+        with self.db() as db:
+            row = db.execute("SELECT payload FROM issues WHERE id=?", (identity,)).fetchone() if identity else db.execute(
+                "SELECT payload FROM issues ORDER BY created DESC LIMIT 1").fetchone()
+        if not row:
+            raise ValueError("Saved briefing not found")
+        return json.loads(row[0])
+
+    def export_issue(self, destination, identity=None):
+        from .export import markdown
+        content = markdown(self.issue(identity))
+        destination = Path(destination).resolve()
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            fd = os.open(destination, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        except FileExistsError as exc:
+            raise ValueError("Export destination already exists; choose a new filename") from exc
+        with os.fdopen(fd, 'w') as stream:
+            stream.write(content)
+
     def previous(self):
         return [{"date": issue["created_at"], "stories": [
             {"event_key": s["event_key"], "title": s["title"], "what_changed": s["what_changed"]}

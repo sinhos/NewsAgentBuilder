@@ -16,6 +16,9 @@ def main():
     sub.add_parser("doctor", help="Check local prerequisites without calling a model")
     p = sub.add_parser("export", help="Export your newsletter settings, without history or credentials")
     p.add_argument("file", type=Path)
+    p = sub.add_parser("export-briefing", help="Save an edition as readable Markdown (latest by default)")
+    p.add_argument("file", type=Path)
+    p.add_argument("--issue", help="Saved edition ID; omit for the latest")
     p = sub.add_parser("serve", help="Open the local reading and setup interface")
     p.add_argument("--port", type=int, default=8765)
     for action in ("collect", "run"):
@@ -48,6 +51,9 @@ def main():
         elif args.action == "export":
             store.export_config(args.file)
             print(f"Saved {args.file}. Contains your profile and source URLs; review before sharing.")
+        elif args.action == "export-briefing":
+            store.export_issue(args.file, args.issue)
+            print(f"Saved briefing: {args.file}")
         elif args.action == "serve":
             from .server import make_server
             store.init()
