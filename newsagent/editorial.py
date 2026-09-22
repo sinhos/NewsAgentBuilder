@@ -39,8 +39,16 @@ usually put it in low_priority with a specific reason. Do not assume all wrapper
 
 Group reposts of one event. Compare with previous issue titles/event keys; repeat only for a
 material change and explain the delta. Do not imply independent corroboration from copied news.
-Limit to 5 stories, with at most 2 'act'. Prefer fewer substantial explainers over a list of teasers.
-Aim for useful depth within the reading budget, about 180-350 words per important story.
+Prefer 3 stories; never exceed 5, with at most 2 'act'. Zero is valid on quiet days.
+Write compactly: title at most 12 words; overview at most 45 words.
+Each what_changed and why_it_matters is at most 45 words; next_step at most 25 words.
+Each limitations and durability is at most 40 words. Aim for 80-140 words of prose per story.
+The reader shows the first three fields, with caveats and supporting excerpts on demand.
+Keep attribution and decisive uncertainty in the visible summary, not only in hidden caveats.
+Use clear sentences, no long preambles. A 15-minute budget is a ceiling, never a target.
+Creator business advice, investor promotion and model demos are discovery, not validation.
+Skip generic motivation, course funnels and revenue promises; explain commercial incentives
+when relevant. Include practical client-work or startup lessons only if tied to this profile.
 Each story must say what_changed, why_it_matters to the profile, limitations, a proportionate
 next_step (including no action), and durability (transferable skill vs short-lived product).
 Use evidence entries for EACH central factual claim, with a short EXACT contiguous quote from
@@ -51,7 +59,7 @@ Weak/metadata-only/unknown-date evidence belongs in watch, attributed clearly. D
 unknown-date material as today's news. Older context is background, not a new announcement.
 watch_source_id is an existing YouTube item ID only if watching adds something not in text;
 explain the benefit in watch_reason. Otherwise both are empty. Never invent timestamps.
-low_priority contains at most 8 short titles with source_id and reason. No attacks on creators.
+low_priority contains at most 8 titles (12 words max) with source_id and reason (25 words max). No attacks on creators.
 The app computes coverage and reading time, so do not invent checked-source counts.
 """
 
@@ -90,6 +98,11 @@ def validate_schema(value, schema, path="issue"):
 
 def validate_issue(issue, packet):
     validate_schema(issue, ISSUE_SCHEMA)
+    def bounded(text, limit, label):
+        if len(text.split()) > limit:
+            raise ValueError(f"{label} exceeds concise limit of {limit} words")
+    bounded(issue["title"], 16, "Issue title")
+    bounded(issue["overview"], 45, "Overview")
     items = {x["id"]: x for x in packet["items"]}
     if len(issue["stories"]) > 5 or len(issue["low_priority"]) > 8:
         raise ValueError("Issue exceeds editorial limits")
@@ -98,6 +111,9 @@ def validate_issue(issue, packet):
     keys = set()
     quoted_words = {}
     for story in issue["stories"]:
+        for field, limit in {"title": 12, "what_changed": 45, "why_it_matters": 45,
+                             "next_step": 25, "limitations": 40, "durability": 40}.items():
+            bounded(story[field], limit, field)
         if not story["event_key"].strip() or story["event_key"] in keys:
             raise ValueError("Repeated or missing event key")
         keys.add(story["event_key"])
@@ -128,6 +144,8 @@ def validate_issue(issue, packet):
             if not source or source["platform"] != "youtube" or not story["watch_reason"].strip():
                 raise ValueError("Watch recommendation needs a real YouTube source and reason")
     for brief in issue["low_priority"]:
+        bounded(brief["title"], 12, "Low-priority title")
+        bounded(brief["reason"], 25, "Low-priority reason")
         if brief["source_id"] not in items:
             raise ValueError("Low-priority item has no retrieved source")
     prose = [issue["title"], issue["overview"]]

@@ -14,80 +14,87 @@
   },
   "sources": [
     {
-      "id": "andrew-linkedin",
-      "name": "Andrew Ng \u2014 applied AI and skills",
-      "platform": "linkedin",
-      "url": "https://www.linkedin.com/in/andrewyng/",
+      "id": "nick-saraev-youtube",
+      "name": "Nick Saraev",
+      "platform": "youtube",
+      "url": "https://www.youtube.com/@nicksaraev/videos",
       "enabled": true
     },
     {
-      "id": "karpathy-x",
-      "name": "Andrej Karpathy \u2014 engineering and learning",
-      "platform": "x",
-      "url": "https://x.com/karpathy",
-      "enabled": true
-    },
-    {
-      "id": "simon-x",
-      "name": "Simon Willison \u2014 practical engineering",
-      "platform": "x",
-      "url": "https://x.com/simonw",
-      "enabled": true
-    },
-    {
-      "id": "deeplearning-instagram",
-      "name": "DeepLearning.AI \u2014 discovery, verify claims",
+      "id": "nick-saraev-instagram",
+      "name": "Nick Saraev",
       "platform": "instagram",
-      "url": "https://www.instagram.com/deeplearningai/",
+      "url": "https://www.instagram.com/nick_saraev/",
       "enabled": true
     },
     {
-      "id": "karpathy-youtube",
-      "name": "Andrej Karpathy \u2014 technical depth",
+      "id": "nick-saraev-linkedin",
+      "name": "Nick Saraev",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/in/nick-saraev/",
+      "enabled": true
+    },
+    {
+      "id": "alex-hormozi-youtube",
+      "name": "Alex Hormozi",
       "platform": "youtube",
-      "url": "https://www.youtube.com/@AndrejKarpathy/videos",
+      "url": "https://www.youtube.com/c/alexhormozi/videos",
       "enabled": true
     },
     {
-      "id": "fireship-youtube",
-      "name": "Fireship \u2014 discovery, filter sensational framing",
+      "id": "alex-hormozi-instagram",
+      "name": "Alex Hormozi",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/hormozi/",
+      "enabled": true
+    },
+    {
+      "id": "alex-hormozi-linkedin",
+      "name": "Alex Hormozi",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/in/alexhormozi/",
+      "enabled": true
+    },
+    {
+      "id": "nate-herk-youtube",
+      "name": "Nate Herk",
       "platform": "youtube",
-      "url": "https://www.youtube.com/@Fireship/videos",
+      "url": "https://www.youtube.com/@nateherk/videos",
       "enabled": true
     },
     {
-      "id": "simon-feed",
-      "name": "Simon Willison \u2014 original posts",
-      "platform": "rss",
-      "url": "https://simonwillison.net/atom/everything/",
+      "id": "nate-herk-instagram",
+      "name": "Nate Herk",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/nateherk/",
       "enabled": true
     },
     {
-      "id": "openai-feed",
-      "name": "OpenAI \u2014 vendor announcements",
-      "platform": "rss",
-      "url": "https://openai.com/news/rss.xml",
+      "id": "nate-herk-linkedin",
+      "name": "Nate Herk",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/in/nateherkelman/",
       "enabled": true
     },
     {
-      "id": "github-feed",
-      "name": "GitHub \u2014 tools and engineering",
-      "platform": "rss",
-      "url": "https://github.blog/feed/",
+      "id": "nate-herk-x",
+      "name": "Nate Herk",
+      "platform": "x",
+      "url": "https://x.com/nateherk",
       "enabled": true
     },
     {
-      "id": "pragmatic-feed",
-      "name": "The Pragmatic Engineer \u2014 engineering work and careers",
-      "platform": "rss",
-      "url": "https://newsletter.pragmaticengineer.com/feed",
+      "id": "y-combinator-linkedin",
+      "name": "Y Combinator",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/school/y-combinator/",
       "enabled": true
     },
     {
-      "id": "webdev-feed",
-      "name": "web.dev \u2014 web platform and quality",
-      "platform": "rss",
-      "url": "https://web.dev/feed.xml",
+      "id": "a16z-linkedin",
+      "name": "a16z",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/company/a16z/",
       "enabled": true
     }
   ]

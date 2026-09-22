@@ -11,7 +11,7 @@ python3 -m newsagent init
 python3 -m newsagent serve
 ```
 
-Open **http://127.0.0.1:8765**. Review the starter sources and choose **Make my briefing**. Keep the server running while using it. Nothing runs on a recurring schedule by default.
+Open **http://127.0.0.1:8765**. Review the starter sources and choose **Generate briefing**. Keep the server running while using it. Nothing runs on a recurring schedule by default.
 
 In Codex, open this repository and ask **“Use $news-brief to make my briefing.”** The skill can also investigate original evidence before writing. If skill discovery has not refreshed, ask Codex to read `skills/news-brief/SKILL.md` directly.
 

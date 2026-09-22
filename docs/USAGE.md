@@ -11,7 +11,7 @@ python3 -m newsagent init
 python3 -m newsagent serve
 ```
 
-Open `http://127.0.0.1:8765`. Keep the terminal running. Choose **Make my briefing** to collect and generate, or use **Run options** to do the stages separately. On the first run, choose the seven-day catch-up if useful. Future runs default to 24 hours. Nothing runs periodically unless you arrange a schedule.
+Open `http://127.0.0.1:8765`. Keep the terminal running. Choose **Generate briefing** to collect and generate, or use **Run options** to do the stages separately. On the first run, choose the seven-day catch-up if useful. Future runs default to 24 hours. Nothing runs periodically unless you arrange a schedule.
 
 The website runs on your computer; it is not deployed publicly. Do not expose this development server through a tunnel or bind it to a public interface. Public hosting would need a different authentication/deployment design.
 
@@ -25,7 +25,9 @@ This mode uses the model in your conversation and can investigate supporting sou
 
 | Platform | This version's route | What still needs the user |
 |---|---|---|
-| LinkedIn | OpenCLI `linkedin posts --profile-url …` | Connected browser extension and signed-in session; personal profiles only |
+| LinkedIn profiles | OpenCLI `linkedin posts --profile-url …` | Connected browser extension and signed-in session |
+| LinkedIn companies | `mcporter call linkedin.get_company_posts` | Configured LinkedIn MCP and signed-in session; returns undated page text |
+| LinkedIn school pages (including YC) | Saved in source list | Current connector does not support these pages; explicitly import accessible posts |
 | X | OpenCLI `twitter tweets …` | Connected browser extension and signed-in session |
 | Instagram | OpenCLI `instagram user …` | Connected browser extension and signed-in session |
 | YouTube | yt-dlp channel metadata; selected transcripts through the evidence command | Installed yt-dlp; transcript availability is best-effort |
@@ -46,6 +48,10 @@ This project does not supply free GPT/Claude API access or bundle subscription p
 
 Sources: [Codex non-interactive mode](https://learn.chatgpt.com/docs/non-interactive-mode), [Codex configuration](https://learn.chatgpt.com/docs/config-file/config-sample), [Gemini compatibility](https://ai.google.dev/gemini-api/docs/openai), [Ollama](https://docs.ollama.com/).
 
+**Short summaries, optional depth**
+
+The reader shows what changed, why it matters and a practical takeaway. Expand **Evidence & context** for caveats, durable lessons, supporting excerpts and feedback. Future editions prefer three stories (maximum five) and enforce short field limits. Fifteen minutes is a ceiling. Collection status is collapsible, and old editions retain their original sources and dates when you change the list.
+
 **Evidence and privacy**
 
 The app stores your settings, evidence packets, issues and feedback in `.local/`, excluded from Git. Keep this folder private. Use `python3 -m newsagent --home /your/private/folder …` to move storage outside the checkout. Deleting that folder removes local history; source-provider/model-provider retention is separate. The app has no telemetry, trackers, remote fonts or external frontend scripts.
@@ -65,7 +71,7 @@ Only supply `--published YYYY-MM-DD` when verified from the source. Imports use 
 
 Collection takes recent samples rather than reading an entire platform. It keeps at most eight items per source and forty overall (sixty with explicit imports). Known old items are excluded from the selected lookback; undated items remain marked as undated. The writer compares recent editions to reduce repetition, but semantic deduplication is model-dependent. Feedback is supplied to later runs rather than silently changing preferences.
 
-The editable starter list is a starting point, not an endorsement of every creator's claims. It emphasizes technical engineering; Swiss career data and design coverage should be expanded as you identify useful original sources. No job-market completeness claim is made.
+The starter list now follows Nick Saraev, Alex Hormozi and Nate Herk across YouTube, Instagram and LinkedIn, plus Nate on X and YC/a16z on LinkedIn. See [source links and limitations](SOURCES.md). These are discovery sources, not independent validation of commercial claims or hiring trends. Swiss career coverage remains incomplete.
 
 **Check the implementation**
 

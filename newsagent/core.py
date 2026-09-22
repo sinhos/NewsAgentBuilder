@@ -71,8 +71,8 @@ def validate_config(config):
             raise ValueError("Source URL does not match its platform")
         if source["platform"] in ("x", "instagram") and not re.fullmatch(r"/[A-Za-z0-9_.]+/?", u.path):
             raise ValueError("Use an account URL, not an individual post")
-        if source["platform"] == "linkedin" and not re.fullmatch(r"/in/[A-Za-z0-9_-]+/?", u.path):
-            raise ValueError("This connector needs a LinkedIn /in/ profile URL")
+        if source["platform"] == "linkedin" and not re.fullmatch(r"/(?:in|company|school)/[A-Za-z0-9_-]+/?", u.path):
+            raise ValueError("Use a LinkedIn /in/, /company/ or /school/ page URL")
     provider = config["provider"]
     if not isinstance(provider, dict) or set(provider) != {"backend", "model", "base_url", "key_env"}:
         raise ValueError("Invalid provider fields")
@@ -194,7 +194,7 @@ class Store:
                 if source["enabled"]:
                     progress("Reading " + source["name"])
                     try:
-                        if source["platform"] in ("x", "linkedin", "instagram") and not bridge:
+                        if sources.needs_browser_bridge(source) and not bridge:
                             raise ValueError("OpenCLI browser extension is not connected. Connect your browser and sign in to this platform.")
                         fetched = sources.collect(source)
                         recent = [i for i in fetched if not i["published_at"] or

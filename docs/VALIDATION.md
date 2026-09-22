@@ -1,3 +1,17 @@
+# Redesign validation — 22 September 2026
+
+Sixteen tests pass, including new limits on individual story fields, acceptance of LinkedIn organisation URLs, correct company-post routing, rejection of profile-only responses, undated company-page evidence, and explicit rejection of unsupported school-page retrieval. Company responses were tested with fixtures, not live authenticated content.
+
+The public starter and private source settings now contain 12 channels grouped under Nick Saraev, Alex Hormozi, Nate Herk, Y Combinator and a16z. Account links were checked against public search/profile results and creator websites; that does not verify collection access. Nate's Instagram and X links follow the links on his own website. Start Tech was omitted because its identity remained unclear.
+
+The social browser bridge is still disconnected. A read-only a16z MCP attempt reported incomplete browser setup; no posts were returned. YC's LinkedIn page uses `/school/`, which the installed MCP explicitly does not support. Its URL is preserved, with an unavailable connector label, rather than rewritten to a different route.
+
+The saved September 21 edition was shortened to three stories: a two-minute visible summary and four minutes including supporting material. Its original dates, evidence and coverage remain attached; the original edition remains in the archive. It is not a new collection from the revised sources. Private editions are excluded from Git.
+
+The redesigned reader was checked in the browser: source preferences saved and were restored, and evidence expands without leaving the story. Desktop and phone layouts were inspected. Python compilation and JavaScript syntax checks pass. No frontend dependencies, external assets or trackers were added.
+
+---
+
 # Validation — 21 September 2026
 
 This records what was actually exercised in the first implementation. It is not a guarantee of future connector access or editorial accuracy.
@@ -20,6 +34,6 @@ Fourteen standard-library tests pass. They cover invented citations/quotes, unkn
 
 Ollama and compatible endpoints have implemented adapters but were not tested against a live model server. Their exact model/schema support must be checked before relying on them. The automatic enrichment step attempts bounded page/transcript retrieval; it is not general web research. The transcript extractor and direct fetcher were exercised, while the first real GPT issue was generated before automatic enrichment was added.
 
-There is no public deployment, recurring schedule, email delivery, visual understanding of videos/Reels, or automatic following-list import. LinkedIn collection currently supports personal profiles, not company pages. Social access depends on the user's browser and external tools; platform restrictions still apply.
+There is no public deployment, recurring schedule, email delivery, visual understanding of videos/Reels, or automatic following-list import. At that version, LinkedIn collection supported personal profiles only; see the September 22 update for the company adapter and remaining school-page limitation. Social access depends on the user's browser and external tools; platform restrictions still apply.
 
 The review pass uses the same model as drafting. Exact quotation checks cannot establish that a claim follows from the quoted passage. No human-labeled relevance/recall benchmark has been completed. Novelty grouping, wrapper-value judgments and career implications still need user feedback and spot checks. This is a usable personal first version, not a proven misinformation filter.

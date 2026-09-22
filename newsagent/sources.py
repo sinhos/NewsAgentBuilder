@@ -118,7 +118,35 @@ def normalize_social(source, data):
     return output
 
 
+def needs_browser_bridge(source):
+    return source["platform"] in ("x", "instagram") or (
+        source["platform"] == "linkedin" and urlsplit(source["url"]).path.startswith("/in/"))
+
+
+def collect_linkedin_organisation(source):
+    if urlsplit(source["url"]).path.startswith("/school/"):
+        raise ValueError("Saved source: LinkedIn school pages are not supported by the installed connector. Import posts you can access.")
+    raw = command(["mcporter", "call", "linkedin.get_company_posts",
+                   "company_name=" + source["url"], "--output", "json"], timeout=90)
+    data = json.loads(raw)
+    if data.get("isError"):
+        raise ValueError("LinkedIn MCP is not ready. Check its setup and signed-in session locally.")
+    if "sections" not in data:
+        blocks = data.get("content", [])
+        texts = [b.get("text", "") for b in blocks if b.get("type") == "text"]
+        if len(texts) == 1:
+            data = json.loads(texts[0])
+    content = data.get("sections", {}).get("posts")
+    if not isinstance(content, str) or len(content.strip()) < 100:
+        raise ValueError("LinkedIn returned no usable organisation posts; no coverage claimed")
+    # The MCP returns a page, not individually dated posts. Do not invent boundaries/dates.
+    return [item(source, source["name"] + " — posts page", source["url"], content,
+                 access="organisation posts page; individual dates and post links unverified")]
+
+
 def collect_social(source):
+    if source["platform"] == "linkedin" and not needs_browser_bridge(source):
+        return collect_linkedin_organisation(source)
     p = urlsplit(source["url"])
     handle = p.path.strip("/").split("/")[0].lstrip("@")
     if source["platform"] == "x":

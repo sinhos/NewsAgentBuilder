@@ -12,11 +12,11 @@ from unittest.mock import patch
 from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
-from newsagent.core import Store, write_json
+from newsagent.core import Store, write_json, validate_config
 from newsagent.editorial import validate_issue
 from newsagent.net import safe_url, public_addresses
 from newsagent.server import make_server
-from newsagent.sources import item, normalize_social, collect_feed
+from newsagent.sources import item, normalize_social, collect_feed, collect_social, needs_browser_bridge
 
 
 def fixture(store):
@@ -89,6 +89,15 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             validate_issue(altered, self.packet)
 
+    def test_concise_fields_cannot_hide_long_prose_within_total_budget(self):
+        for field, limit in {"title": 12, "what_changed": 45, "why_it_matters": 45,
+                             "next_step": 25, "limitations": 40, "durability": 40}.items():
+            draft = copy.deepcopy(self.issue)
+            draft["stories"][0][field] = "word " * (limit + 1)
+            with self.assertRaisesRegex(ValueError, "concise limit"):
+                validate_issue(draft, self.packet)
+        self.assertGreater(validate_issue(self.issue, self.packet), 0)
+
     def test_collect_filters_old_and_future_and_exposes_failures(self):
         cfg = self.store.config()
         cfg["sources"] = [{"id": "a", "name": "A", "url": "https://example.org/feed", "platform": "rss", "enabled": True},
@@ -159,6 +168,29 @@ class ConnectorTests(unittest.TestCase):
             normalize_social(source, {"success": True})
         with self.assertRaises(ValueError):
             normalize_social(source, [])
+
+    def test_linkedin_company_route_keeps_page_evidence_undated(self):
+        source = {"id": "a16z", "name": "a16z", "platform": "linkedin", "url": "https://www.linkedin.com/company/a16z/", "enabled": True}
+        config = json.loads((Path(__file__).resolve().parents[1] / "config/starter.json").read_text())
+        config["sources"] = [source]
+        validate_config(config)
+        self.assertFalse(needs_browser_bridge(source))
+        payload = {"sections": {"posts": "A company post with content and claims. " * 10}}
+        for data in (payload, {"content": [{"type": "text", "text": json.dumps(payload)}]}):
+            with patch("newsagent.sources.command", return_value=json.dumps(data)) as command:
+                result = collect_social(source)
+            self.assertEqual(command.call_args.args[0][2], "linkedin.get_company_posts")
+            self.assertIsNone(result[0]["published_at"])
+            self.assertIn("individual dates", result[0]["access"])
+        with patch("newsagent.sources.command", return_value=json.dumps({"sections": {"about": "Not posts"}})):
+            with self.assertRaises(ValueError):
+                collect_social(source)
+        source["url"] = "https://www.linkedin.com/school/y-combinator/"
+        validate_config(config)
+        with patch("newsagent.sources.command") as command:
+            with self.assertRaisesRegex(ValueError, "school pages"):
+                collect_social(source)
+            command.assert_not_called()
 
     def test_atom_dates_and_rss_partial_content(self):
         source = {"id": "feed", "name": "Example", "platform": "rss", "url": "https://example.org/feed"}
