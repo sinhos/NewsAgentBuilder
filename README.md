@@ -6,23 +6,36 @@ Every important story explains **what changed**, **why it matters to you**, and 
 
 This is an open-source local application. You own the configuration and history, choose the model, and run it from a browser or Codex. There is no hosted service or project subscription.
 
-## Get started
+## Install and run on your computer
 
 You need **Git and Python 3.11+ on macOS or Linux**. Windows users can try WSL; native Windows is not supported. No Python packages, frontend packages or build step are required for the app itself.
+
+**1. Download the project.** Open a terminal on your computer and run:
 
 ```sh
 git clone https://github.com/sinhos/NewsAgentBuilder.git
 cd NewsAgentBuilder
+```
+
+**2. Start the app.** From that project folder, run:
+
+```sh
 python3 -m newsagent serve
 ```
 
-Open **[localhost:8765](http://127.0.0.1:8765)**. The first visit opens a three-step builder:
+**3. Open the address printed in your terminal.** Once the app has started, copy `http://127.0.0.1:8765` into your browser. Keep the terminal running while you use it.
+
+This address points to **your own computer**. It only works after step 2; it is not a public website or a demo hosted by GitHub. If the browser cannot connect, check the terminal for a startup error.
+
+The first visit opens a three-step builder:
 
 1. Describe your work, interests, exclusions, language and reading budget.
 2. Paste your source URLs, one per line.
 3. Choose a model, check prerequisites, and save your newsletter.
 
-Keep the terminal running. Once the chosen model and collectors are connected, select **New briefing**. Use **Options & archive → Past 7 days** for an initial catch-up. Runs are manual; the app does not schedule or email editions.
+Once the chosen model and collectors are connected, select **New briefing**. Use **Options & archive → Past 7 days** for an initial catch-up. Runs are manual; the app does not schedule or email editions.
+
+To use it again later, open a terminal in the downloaded `NewsAgentBuilder` folder and repeat step 2. Your saved settings and editions remain on your computer.
 
 ## Bring your model
 
